@@ -1,0 +1,21 @@
+{
+    "name": "import-sort-style-javascript",
+    "version": "1.0.0",
+    "description": "An import-sort style that groups and sorts based on MentionMe styling",
+    "main": "lib/index.js",
+    "scripts": {
+        "build": "tsc -b .",
+        "build:watch": "tsc -b . -w"
+    },
+    "repository": "mention-me/import-sort",
+    "license": "ISC",
+    "files": [
+        "lib"
+    ],
+    "devDependencies": {
+        "@types/node": "^10.3.5",
+        "import-sort-parser": "^6.0.0",
+        "import-sort-style": "^6.0.0",
+        "typescript": "^3.2.4"
+    }
+}
