@@ -22,9 +22,10 @@ export default function (styleApi: IStyleAPI): IStyleItem[] {
         unicode,
     } = styleApi;
 
-    const isHotModuleReplacement = (imported) => Boolean(imported.moduleName.match(/^react-hot-loader/));
-    const isReactModule = (imported) => Boolean(imported.moduleName.match(/^(react|react-dom)$/));
-    const isStylesModule = (imported) => Boolean(imported.moduleName.match(/\.(s?css|less)$/));
+    const isHotModuleReplacement = ({ moduleName }) => /^react-hot-loader/.test(moduleName);
+    const isReactModule = ({ moduleName }) => /^(react|react-dom)$/.test(moduleName);
+    const isStylesModule = ({ moduleName }) => /\.(s?css|less)$/.test(moduleName);
+    const isTypescriptType = ({ type }) => type === "import-type";
 
     return [
         // import "foo"
@@ -59,7 +60,7 @@ export default function (styleApi: IStyleAPI): IStyleItem[] {
 
         // import … from "foo";
         {
-            match: and(isAbsoluteModule, not(isStylesModule)),
+            match: and(isAbsoluteModule, not(isStylesModule), not(isTypescriptType)),
             sort: moduleName(naturally),
             sortNamedMembers: alias(unicode),
         },
@@ -68,7 +69,15 @@ export default function (styleApi: IStyleAPI): IStyleItem[] {
         // import … from "./foo";
         // import … from "../foo";
         {
-            match: and(isRelativeModule, not(isStylesModule)),
+            match: and(isRelativeModule, not(isStylesModule), not(isTypescriptType)),
+            sort: [dotSegmentCount, moduleName(naturally)],
+            sortNamedMembers: alias(unicode),
+        },
+        { separator: true },
+
+        // import type ... from "..."
+        {
+            match: isTypescriptType,
             sort: [dotSegmentCount, moduleName(naturally)],
             sortNamedMembers: alias(unicode),
         },
