@@ -25,6 +25,7 @@ export default function (styleApi: IStyleAPI): IStyleItem[] {
     const isHotModuleReplacement = ({ moduleName }) => /^react-hot-loader/.test(moduleName);
     const isReactModule = ({ moduleName }) => /^(react|react-dom)$/.test(moduleName);
     const isStylesModule = ({ moduleName }) => /\.(s?css|less)$/.test(moduleName);
+    const isAsset = ({ moduleName }) => /\.(png|jpg|jpeg|gif|woff|woff2|ttf|eot)(\?.*)?$/i.test(moduleName);
     const isTypescriptType = ({ type }) => type === "import-type";
 
     return [
@@ -58,7 +59,7 @@ export default function (styleApi: IStyleAPI): IStyleItem[] {
         },
         { separator: true },
 
-        // import … from "foo";
+        // Absolute imports
         {
             match: and(isAbsoluteModule, not(isStylesModule), not(isTypescriptType)),
             sort: moduleName(naturally),
@@ -66,10 +67,9 @@ export default function (styleApi: IStyleAPI): IStyleItem[] {
         },
         { separator: true },
 
-        // import … from "./foo";
-        // import … from "../foo";
+        // Relative imports
         {
-            match: and(isRelativeModule, not(isStylesModule), not(isTypescriptType)),
+            match: and(isRelativeModule, not(isStylesModule), not(isTypescriptType), not(isAsset)),
             sort: [dotSegmentCount, moduleName(naturally)],
             sortNamedMembers: alias(unicode),
         },
@@ -82,6 +82,13 @@ export default function (styleApi: IStyleAPI): IStyleItem[] {
             sortNamedMembers: alias(unicode),
         },
         { separator: true },
+
+        // Assets (images, fonts, etc)
+        {
+            match: isAsset,
+            sort: [dotSegmentCount, moduleName(naturally)],
+            sortNamedMembers: alias(unicode),
+        },
 
         // import "./styles.less";
         { match: and(hasNoMember, isRelativeModule, isStylesModule) },
