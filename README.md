@@ -25,11 +25,19 @@ import ReactDOM from "react-dom";
 import { ApolloProvider } from "@apollo/client";
 import { BrowserRouter, Route, Switch } from "react-router-dom";
 
-// First-party modules sorted by "relative depth" and then by name
+// Absolute modules
 import Footer from "src/js/shared/components/Footer";
 import Header from "src/js/shared/components/Header";
 import Loading from "src/js/shared/components/Loading";
 import Toasts from "src/js/shared/components/Toasts";
+
+// First-party modules sorted by "relative depth" and then by name
+import Loading from "./Loading";
+import Toasts from "../Toasts";
+
+// Assets (images, fonts, etc)
+import IconSVG from "./assets/Icon.svg";
+import Image from "./assets/Image.png";
 
 // Stylesheets
 import "./App.less";
