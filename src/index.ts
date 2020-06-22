@@ -4,7 +4,7 @@ import * as fs from "fs";
 import { IStyleAPI, IStyleItem } from "import-sort-style";
 
 // Scan each module.paths. If there exists node_modules/moduleName then return true. Otherwise return false.
-const isNodeModule = (moduleName) => {
+const isNodeModule = ({ moduleName }) => {
     return module.paths.some((nodeModulePath) => fs.existsSync(path.join(nodeModulePath, moduleName)));
 };
 
@@ -53,7 +53,7 @@ export default function (styleApi: IStyleAPI): IStyleItem[] {
 
         // Node modules
         {
-            match: (imported) => isNodeModule(imported.moduleName),
+            match: and(isNodeModule, not(isRelativeModule)),
             sort: moduleName(naturally),
             sortNamedMembers: alias(unicode),
         },
